@@ -1,0 +1,26 @@
+version: "3.6"
+
+services:
+  db:
+    image: memsql/cluster-in-a-box
+    ports:
+      - 3305:3306
+      - 8080:8080
+    environment: 
+      LICENSE_KEY: 'BDNiNTdlODQzNjk4ZDRiMTFiNWQwZWY2NDFmMWMzZjZhAAAAAAAAAAAEAAAAAAAAAAwwNQIYIyMb22xv4le4wFYaOxyM543tSKF54QCVAhkAv86WCc0Pph23zaONxdXLallrL1Bg0SMQAA=='
+      START_AFTER_INIT: 'Y'
+    volumes:
+      - data:/data
+  web:
+    build: .
+    working_dir: $PWD
+    command: sh -c "/wait && npx http-serve"
+    environment:
+      WAIT_HOSTS: db:8080
+    volumes:
+      - $PWD:$PWD
+    depends_on:
+      - db
+
+volumes:
+  data:
